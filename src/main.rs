@@ -20,7 +20,7 @@ impl EventHandler for Handler {
 
     // For each received message do this:
     async fn message(&self, ctx: Context, msg: Message) {
-        if !author_is_bot(&msg) {
+        if !author_is_bot(&msg) && !send_via_dm(&msg) {
         let functions = get_commands();
         let args = msg.content.split_whitespace().next().unwrap();
         match functions.get(args) {
