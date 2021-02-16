@@ -4,6 +4,9 @@
 
 Taurak is a Discord Bot with a lot of functionality. It has a music player, player experience database as well as admin commands. Right now it is still under development and therefore not ready. If you want to host your own bot feel free to clone this bot and host it yourself.
 
+## How to add
+
+[Click here](https://discord.com/api/oauth2/authorize?client_id=809131101246980096&permissions=0&scope=bot)
 ## Commands
 
 - test -> Hello, im online
