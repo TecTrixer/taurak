@@ -20,17 +20,27 @@ impl EventHandler for Handler {
 
     // For each received message do this:
     async fn message(&self, ctx: Context, msg: Message) {
-        if author_is_taurak(msg.clone(), &ctx.cache).await {
-            println!("Its from me!")
+        // Check if message is either from me or another bot
+        if !author_is_bot(&msg) {
+            // Check if message is sent via direct message
+            if !send_via_dm(&msg) {
+        let parsed_message = parse_command(&msg, "t".into());
+        if parsed_message.is_command {
+            let functions = get_commands();
+            match functions.get(&parsed_message.command.expect("Err parsing the command")) {
+                Some(function) => {function(ctx,msg).await;},
+            _ => println!("No command found") // TODO: Add function for either help or just telling that there was no command found
+            }
         }
-        if !author_is_bot(&msg) && !send_via_dm(&msg) {
-        let functions = get_commands();
-        let args = msg.content.split_whitespace().next().unwrap();
-        match functions.get(args) {
-            Some(function) => {function(ctx,msg).await;},
-            _ => println!("No command found")
-        }
-    }}
+    }
+    // Sent via direct message
+else {
+    let functions = get_commands();
+    match functions.get("dm_not_implemented") {
+        Some(function) => {function(ctx,msg).await;},
+        _ => println!("No command found")
+    }
+}}}
 
     // After connecting successfully with discord do this:
     async fn ready(&self, _: Context, ready: Ready) {
