@@ -9,21 +9,25 @@ use serenity::{
 
 struct Handler;
 
+mod commands;
+use crate::commands::*;
+
+mod checks;
+use crate::checks::*;
+
 #[async_trait]
 impl EventHandler for Handler {
 
     // For each received message do this:
     async fn message(&self, ctx: Context, msg: Message) {
-        if msg.content == "!ping" {
-            // Sending a message can fail, due to a network error, an
-            // authentication error, or lack of permissions to post in the
-            // channel, so log to stdout when some error happens, with a
-            // description of it.
-            if let Err(why) = msg.channel_id.say(&ctx.http, "Pong!").await {
-                println!("Error sending message: {:?}", why);
-            }
+        if !author_is_bot(&msg) {
+        let functions = get_commands();
+        let args = msg.content.split_whitespace().next().unwrap();
+        match functions.get(args) {
+            Some(function) => {function(ctx,msg).await;},
+            _ => println!("No command found")
         }
-    }
+    }}
 
     // After connecting successfully with discord do this:
     async fn ready(&self, _: Context, ready: Ready) {
