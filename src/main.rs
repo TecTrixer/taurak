@@ -22,7 +22,7 @@ impl EventHandler for Handler {
         // Check if message is either from me or another bot
         if !author_is_bot(&msg) {
             // Check if message is sent via direct message
-            if !send_via_dm(&msg) {
+            if !send_via_dm(&msg) || author_is_owner(&msg) {
                 // TODO: add variable prefix (needs to be stored in data)
                 let parsed_message = parse_command(&msg, "t".into());
                 if parsed_message.is_command {

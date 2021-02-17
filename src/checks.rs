@@ -1,4 +1,5 @@
 use serenity::{cache::Cache, model::channel::Message, prelude::*,};
+use std::env;
 
 
 #[derive(Clone, Debug)]
@@ -113,4 +114,13 @@ pub async fn author_has_permission(msg: Message, permission: serenity::model::pe
        }
    }
    return false;
+}
+
+pub fn author_is_owner(msg: &Message) -> bool {
+    if msg.author.id.as_u64() == &env::var("OWNER_ID").expect("No OWNER_ID in environment").parse::<u64>().expect("OWNER_ID was not a number!") {
+        true
+    }
+    else {
+        false
+    }
 }
