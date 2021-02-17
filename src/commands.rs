@@ -134,9 +134,8 @@ async fn lyr_async(ctx: Context, msg: Message, args: ParsedCommand) {
         _ => "".into(),
     };
 
-    let output = Command::new("sh")
-        .arg("-c")
-        .arg(format!("lyr-no-prompt query {}", song))
+    let output = Command::new("lyr-no-prompt query ")
+        .arg(format!("{}", song))
         .output()
         .expect("Error using the lyr command");
 
