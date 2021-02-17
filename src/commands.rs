@@ -67,28 +67,20 @@ async fn test_async(ctx: Context, msg: Message, _args: ParsedCommand){
     }
 }
 
-// TODO: Remove song selection prompt && handle to large size error (split it up at paragraphs)
+// TODO: handle large size error (split it up at paragraphs)
 pub fn lyr(ctx: Context, msg: Message, args: ParsedCommand) -> Pin<Box<dyn Future<Output = ()> + std::marker::Send>>{
     Box::pin(lyr_async(ctx, msg, args))
 }
 
 async fn lyr_async(ctx: Context, msg: Message, args: ParsedCommand){
-    use std::process::{Command, Stdio};
-    use std::io::Write;
+    use std::process::Command;
+
     let song = match args.args {
         Some(args) => args.join(" "),
         _ => "".into(),
     };
 
-
-let mut child = Command::new("sh").arg("-c").arg(format!("lyr query {}", song)).stdin(Stdio::piped()).stdout(Stdio::piped()).spawn().expect("Error using the lyr command");
-
-{
-    let stdin = child.stdin.as_mut().expect("Failed to open stdin");
-    stdin.write_all("1\n".as_bytes()).expect("Failed to write to stdin");
-}
-
-let output = child.wait_with_output().expect("Failed to read stdout");
+let output = Command::new("sh").arg("-c").arg(format!("lyr-no-prompt query {}", song)).output().expect("Error using the lyr command");
 
 let hello = String::from_utf8(output.stdout).expect("Error when converting command output to string");
     if let Err(why) = msg.channel_id.say(&ctx.http, format!("{}", hello)).await {
