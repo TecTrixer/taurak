@@ -42,6 +42,8 @@ pub fn get_commands() -> HashMap<
     functions.insert("Admin".into(), admin);
     functions.insert("Administrator".into(), admin);
     functions.insert("administrator".into(), admin);
+    functions.insert("offline".into(), offline);
+    functions.insert("online".into(), online);
     // TODO: Maybe handle aliases in a better more efficient way
 
     return functions;
@@ -249,6 +251,77 @@ async fn admin_async(ctx: Context, msg: Message, _args: ParsedCommand) {
         .say(
             &ctx.http,
             "No, you do not possess the power of god",
+        )
+        .await
+    {
+        println!("Error sending message: {:?}", why);
+    }
+    }
+}
+pub fn offline(
+    ctx: Context,
+    msg: Message,
+    args: ParsedCommand,
+) -> Pin<Box<dyn Future<Output = ()> + std::marker::Send>> {
+    Box::pin(offline_async(ctx, msg, args))
+}
+
+async fn offline_async(ctx: Context, msg: Message, _args: ParsedCommand) {
+    if author_has_permission(msg.clone(), serenity::model::permissions::Permissions::ADMINISTRATOR, &ctx.clone().cache, ctx.clone()).await {
+    if let Err(why) = msg
+        .channel_id
+        .say(
+            &ctx.http,
+            "It's getting dark...",
+        )
+        .await
+    {
+        println!("Error sending message: {:?}", why);
+    }
+    ctx.clone().invisible().await;
+}
+    else {
+        if let Err(why) = msg
+        .channel_id
+        .say(
+            &ctx.http,
+            "Sorry, only for admins :(",
+        )
+        .await
+    {
+        println!("Error sending message: {:?}", why);
+    }
+    }
+}
+
+pub fn online(
+    ctx: Context,
+    msg: Message,
+    args: ParsedCommand,
+) -> Pin<Box<dyn Future<Output = ()> + std::marker::Send>> {
+    Box::pin(online_async(ctx, msg, args))
+}
+
+async fn online_async(ctx: Context, msg: Message, _args: ParsedCommand) {
+    if author_has_permission(msg.clone(), serenity::model::permissions::Permissions::ADMINISTRATOR, &ctx.clone().cache, ctx.clone()).await {
+    if let Err(why) = msg
+        .channel_id
+        .say(
+            &ctx.http,
+            "Ahh, the sun is rising...",
+        )
+        .await
+    {
+        println!("Error sending message: {:?}", why);
+    }
+    ctx.clone().online().await;
+}
+    else {
+        if let Err(why) = msg
+        .channel_id
+        .say(
+            &ctx.http,
+            "Sorry, only for admins :(",
         )
         .await
     {
