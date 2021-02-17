@@ -67,7 +67,6 @@ async fn test_async(ctx: Context, msg: Message, _args: ParsedCommand){
     }
 }
 
-// TODO: handle large size error (split it up at paragraphs)
 pub fn lyr(ctx: Context, msg: Message, args: ParsedCommand) -> Pin<Box<dyn Future<Output = ()> + std::marker::Send>>{
     Box::pin(lyr_async(ctx, msg, args))
 }
@@ -89,8 +88,11 @@ if hello.chars().count() == 0 {
     }
 }
 else {
-    if let Err(why) = msg.channel_id.say(&ctx.http, format!("{}", hello)).await {
-        println!("Error sending message: {:?}", why);
+    let paragraphs: Vec<&str> = hello.split("\n\n").collect();
+    for paragraph in paragraphs {
+        if let Err(why) = msg.channel_id.say(&ctx.http, format!("{}", paragraph)).await {
+            println!("Error sending message: {:?}", why);
+        }
     }
 }
 }
