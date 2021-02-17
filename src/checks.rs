@@ -1,5 +1,6 @@
 use serenity::{cache::Cache, model::channel::Message, prelude::*,};
 use std::env;
+use censor::*;
 
 
 #[derive(Clone, Debug)]
@@ -123,4 +124,9 @@ pub fn author_is_owner(msg: &Message) -> bool {
     else {
         false
     }
+}
+
+pub fn has_profanity_content(msg: &Message) -> bool {
+    let censor = Standard + Zealous + Sex;
+    censor.check(&msg.content)
 }

@@ -10,3 +10,4 @@ edition = "2018"
 serenity = { version = "0.10", default-features = false, features = ["client", "gateway", "rustls_backend", "model", "cache"] }
 tokio = { version = "1.0", features = ["macros", "rt-multi-thread"] }
 dotenv = "0.15"
+censor = "0.2"

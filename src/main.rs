@@ -20,6 +20,8 @@ impl EventHandler for Handler {
     // For each received message do this:
     async fn message(&self, ctx: Context, msg: Message) {
         // Check if message is either from me or another bot
+        let msg2 = msg.clone();
+        let ctx2 = ctx.clone();
         if !author_is_bot(&msg) {
             // Check if message is sent via direct message
             if !send_via_dm(&msg) || author_is_owner(&msg) {
@@ -52,6 +54,14 @@ impl EventHandler for Handler {
                     }
                 }
             // TODO: handle message xp when message is no command
+            if has_profanity_content(&msg2) {
+                if let Err(why) = msg2.channel_id
+                                .say(ctx2.http, "Hey, please watch your language!")
+                                .await
+                            {
+                                println!("Error sending message: {:?}", why);
+                            }
+            }
             }
             // Sent via direct message
             else {
