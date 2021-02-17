@@ -10,6 +10,7 @@ Restart=always
 User=maintainer
 WorkingDirectory=/home/maintainer/dev/taurak/
 StartLimitBurst=10
+TimeoutStopSec=infinity
 RestartSec=5
 
 [Install]
