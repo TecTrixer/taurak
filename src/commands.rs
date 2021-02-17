@@ -22,6 +22,7 @@ pub fn get_commands() -> HashMap::<String, fn(Context, Message, ParsedCommand) -
     functions.insert("Sören".into(), soeren);
     functions.insert("Sö".into(), soeren);
     functions.insert("Söse".into(), soeren);
+    // TODO: Maybe handle aliases in a better more efficient way
 
     return functions;
 }
@@ -66,6 +67,7 @@ async fn test_async(ctx: Context, msg: Message, _args: ParsedCommand){
     }
 }
 
+// TODO: Remove song selection prompt && handle to large size error (split it up at paragraphs)
 pub fn lyr(ctx: Context, msg: Message, args: ParsedCommand) -> Pin<Box<dyn Future<Output = ()> + std::marker::Send>>{
     Box::pin(lyr_async(ctx, msg, args))
 }
@@ -122,3 +124,4 @@ async fn soeren_async(ctx: Context, msg: Message, _args: ParsedCommand){
     }
 }
 
+// TODO: add help command (maybe automatic implementation)

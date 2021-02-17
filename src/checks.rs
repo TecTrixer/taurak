@@ -11,6 +11,7 @@ pub fn author_is_bot(msg: &Message) -> bool {
     msg.author.bot
 }
 
+// TODO: remove if not used in the future, is the difference between taurak & other bots important?
 pub async fn _author_is_taurak(msg: Message, cache: &Cache) -> bool {
     msg.is_own(cache).await
 }
@@ -54,6 +55,8 @@ pub fn parse_command(msg: &Message, prefix: String) -> ParsedCommand {
         return ParsedCommand{is_command: false, command: None, args: None}
     }
 }
+
+// TODO: implement this check
 
 // pub async fn author_has_role(msg: Message, role_name: String, cache: &Cache) -> bool {
 //    true 

@@ -32,6 +32,7 @@ impl EventHandler for Handler {
             _ => println!("No command found") // TODO: Add function for either help or just telling that there was no command found
             }
         }
+        // TODO: handle message xp when message is no command
     }
     // Sent via direct message
 else {
@@ -63,6 +64,8 @@ async fn main() {
         .await
         .expect("Err creating client");
 
+    // TODO: add presence update with funny message
+
     // Finally, start a single shard, and start listening to events.
     //
     // Shards will automatically attempt to reconnect, and will perform
@@ -70,4 +73,5 @@ async fn main() {
     if let Err(why) = client.start().await {
         println!("Client error: {:?}", why);
     }
+    // TODO: handle process exit so the presence is offline
 }
