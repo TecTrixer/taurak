@@ -94,7 +94,10 @@ impl EventHandler for Handler {
 #[tokio::main]
 async fn main() {
     // Configure the client with discord bot token in the environment.
-    dotenv::from_filename("secrets.env").expect("No secret token found!");
+    match dotenv::from_filename("secrets.env"){
+        Ok(_x) => {println!("Found secrets.env");},
+        Err(x)=> println!("{}", x)
+    };
     let token = env::var("DISCORD_TOKEN").expect("Expected a token in the environment");
 
     // Create a new instance of the Client, logging in as a bot. This will
