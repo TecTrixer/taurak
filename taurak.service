@@ -8,6 +8,8 @@ ExecStartPre=/home/maintainer/dev/taurak/start.sh
 ExecStart=/home/maintainer/dev/taurak/target/release/taurak
 Restart=always
 User=maintainer
+StartLimitBurst=10
+RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
