@@ -72,7 +72,7 @@ pub fn parse_command(msg: &Message, prefix: String) -> ParsedCommand {
     }
 }
 
-pub async fn author_has_role(msg: Message, role_name: String, cache: &Cache, ctx: Context) -> bool {
+pub async fn _author_has_role(msg: Message, role_name: String, cache: &Cache, ctx: Context) -> bool {
     let guild = msg.guild(cache).await.expect("Guild was not in cache");
     let guild_id = guild.id;
    let role_map = guild.roles;
@@ -96,4 +96,21 @@ pub async fn author_has_role(msg: Message, role_name: String, cache: &Cache, ctx
     _ => {return false;}
    }
    
+}
+
+pub async fn author_has_permission(msg: Message, permission: serenity::model::permissions::Permissions, cache: &Cache, ctx: Context) -> bool {
+    let guild = msg.guild(cache).await.expect("Guild was not in cache");
+    let guild_id = guild.id;
+   let role_map = guild.roles;
+   if role_map.iter().count() == 0 {
+       return false;
+   }
+   for (key, var) in role_map.iter() {
+       if var.has_permission(permission) {
+        if msg.author.has_role(ctx.clone().http, guild_id, key).await.expect("Err getting role") {
+            return true;
+        }
+       }
+   }
+   return false;
 }

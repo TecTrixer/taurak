@@ -3,7 +3,7 @@ use serenity::{model::channel::Message, prelude::*};
 use std::collections::HashMap;
 use std::future::Future;
 use std::pin::Pin;
-use crate::checks::author_has_role;
+use crate::checks::author_has_permission;
 
 pub fn get_commands() -> HashMap<
     String,
@@ -232,7 +232,7 @@ pub fn admin(
 }
 
 async fn admin_async(ctx: Context, msg: Message, _args: ParsedCommand) {
-    if author_has_role(msg.clone(), "Admin".into(), &ctx.clone().cache, ctx.clone()).await {
+    if author_has_permission(msg.clone(), serenity::model::permissions::Permissions::ADMINISTRATOR, &ctx.clone().cache, ctx.clone()).await {
     if let Err(why) = msg
         .channel_id
         .say(
