@@ -15,6 +15,13 @@ pub fn get_commands() -> HashMap::<String, fn(Context, Message, ParsedCommand) -
     functions.insert("test".into(), test);
     functions.insert("lyr".into(), lyr);
     functions.insert("lyrics".into(), lyr);
+    functions.insert("lol".into(), lol);
+    functions.insert("xD".into(), xd);
+    functions.insert("xd".into(), xd);
+    functions.insert("XD".into(), xd);
+    functions.insert("Sören".into(), soeren);
+    functions.insert("Sö".into(), soeren);
+    functions.insert("Söse".into(), soeren);
 
     return functions;
 }
@@ -83,6 +90,34 @@ let output = child.wait_with_output().expect("Failed to read stdout");
 
 let hello = String::from_utf8(output.stdout).expect("Error when converting command output to string");
     if let Err(why) = msg.channel_id.say(&ctx.http, format!("{}", hello)).await {
+        println!("Error sending message: {:?}", why);
+    }
+}
+
+pub fn lol(ctx: Context, msg: Message, args: ParsedCommand) -> Pin<Box<dyn Future<Output = ()> + std::marker::Send>>{
+    Box::pin(lol_async(ctx, msg, args))
+}
+
+async fn lol_async(ctx: Context, msg: Message, _args: ParsedCommand){
+    if let Err(why) = msg.channel_id.say(&ctx.http, "When I was young we used to say ROFL instead of lol.").await {
+        println!("Error sending message: {:?}", why);
+    }
+}
+pub fn xd(ctx: Context, msg: Message, args: ParsedCommand) -> Pin<Box<dyn Future<Output = ()> + std::marker::Send>>{
+    Box::pin(xd_async(ctx, msg, args))
+}
+
+async fn xd_async(ctx: Context, msg: Message, _args: ParsedCommand){
+    if let Err(why) = msg.channel_id.say(&ctx.http, "You can also use emojis, they are better for showing your emotions").await {
+        println!("Error sending message: {:?}", why);
+    }
+}
+pub fn soeren(ctx: Context, msg: Message, args: ParsedCommand) -> Pin<Box<dyn Future<Output = ()> + std::marker::Send>>{
+    Box::pin(soeren_async(ctx, msg, args))
+}
+
+async fn soeren_async(ctx: Context, msg: Message, _args: ParsedCommand){
+    if let Err(why) = msg.channel_id.say(&ctx.http, "Scheel\nDer einzig Wahre...").await {
         println!("Error sending message: {:?}", why);
     }
 }
