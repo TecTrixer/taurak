@@ -1,4 +1,9 @@
-#!/bin/sh
-cd ~/dev/taurak
-git pull
-cargo build --release
+#!/bin/bash
+cd /home/maintainer/dev/taurak/;
+pwd;
+if [ "$(git pull)" == "Already up to date." ]; then
+  echo "Already up to date."
+else
+  echo "$(git pull)";
+  cargo build --release;
+fi;

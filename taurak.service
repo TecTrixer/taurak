@@ -1,6 +1,5 @@
 [Unit]
 Description=Taurak Discord bot
-User=maintainer
 After=network.target
 
 [Service]
@@ -8,6 +7,7 @@ Type=simple
 ExecStartPre=/home/maintainer/dev/taurak/start.sh
 ExecStart=/home/maintainer/dev/taurak/target/release/taurak
 Restart=always
+User=maintainer
 
 [Install]
 WantedBy=multi-user.target
