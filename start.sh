@@ -1,4 +1,5 @@
 #!/bin/bash
+pwd;
 cd /home/maintainer/dev/taurak/;
 if [ "$(git pull)" == "Already up to date." ]; then
   echo "Already up to date."
