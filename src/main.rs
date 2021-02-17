@@ -1,5 +1,5 @@
 use std::env;
-use dotenv::dotenv;
+use dotenv;
 
 use serenity::{
     async_trait,
@@ -28,7 +28,7 @@ impl EventHandler for Handler {
         if parsed_message.is_command {
             let functions = get_commands();
             match functions.get(&parsed_message.command.expect("Err parsing the command")) {
-                Some(function) => {function(ctx,msg).await;},
+                Some(function) => {function(ctx,msg, ParsedCommand{is_command: false, command: None, args: parsed_message.args}).await;},
             _ => println!("No command found") // TODO: Add function for either help or just telling that there was no command found
             }
         }
@@ -37,7 +37,7 @@ impl EventHandler for Handler {
 else {
     let functions = get_commands();
     match functions.get("dm_not_implemented") {
-        Some(function) => {function(ctx,msg).await;},
+        Some(function) => {function(ctx,msg, ParsedCommand{is_command: false, command: None, args: None}).await;},
         _ => println!("No command found")
     }
 }}}
@@ -51,7 +51,7 @@ else {
 #[tokio::main]
 async fn main() {
     // Configure the client with discord bot token in the environment.
-    dotenv().ok();
+    dotenv::from_filename("secrets.env").expect("No secret token found!");
     let token = env::var("DISCORD_TOKEN")
         .expect("Expected a token in the environment");
 

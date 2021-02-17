@@ -1,5 +1,6 @@
 use serenity::{model::channel::Message, cache::Cache};
 
+#[derive(Clone, Debug)]
 pub struct ParsedCommand {
     pub is_command: bool,
     pub command: Option<String>,
