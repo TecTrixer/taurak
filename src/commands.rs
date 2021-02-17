@@ -83,9 +83,16 @@ async fn lyr_async(ctx: Context, msg: Message, args: ParsedCommand){
 let output = Command::new("sh").arg("-c").arg(format!("lyr-no-prompt query {}", song)).output().expect("Error using the lyr command");
 
 let hello = String::from_utf8(output.stdout).expect("Error when converting command output to string");
+if hello.chars().count() == 0 {
+    if let Err(why) = msg.channel_id.say(&ctx.http, "You need to specify a song otherwise I do not know what to search for :(").await {
+        println!("Error sending message: {:?}", why);
+    }
+}
+else {
     if let Err(why) = msg.channel_id.say(&ctx.http, format!("{}", hello)).await {
         println!("Error sending message: {:?}", why);
     }
+}
 }
 
 pub fn lol(ctx: Context, msg: Message, args: ParsedCommand) -> Pin<Box<dyn Future<Output = ()> + std::marker::Send>>{
