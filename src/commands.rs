@@ -3,6 +3,7 @@ use serenity::{model::channel::Message, prelude::*};
 use std::collections::HashMap;
 use std::future::Future;
 use std::pin::Pin;
+use crate::checks::author_has_role;
 
 pub fn get_commands() -> HashMap<
     String,
@@ -36,6 +37,11 @@ pub fn get_commands() -> HashMap<
     functions.insert("Sören".into(), soeren);
     functions.insert("Sö".into(), soeren);
     functions.insert("Söse".into(), soeren);
+    functions.insert("admin".into(), admin);
+    functions.insert("am_i_admin".into(), admin);
+    functions.insert("Admin".into(), admin);
+    functions.insert("Administrator".into(), admin);
+    functions.insert("administrator".into(), admin);
     // TODO: Maybe handle aliases in a better more efficient way
 
     return functions;
@@ -214,6 +220,40 @@ async fn soeren_async(ctx: Context, msg: Message, _args: ParsedCommand) {
         .await
     {
         println!("Error sending message: {:?}", why);
+    }
+}
+
+pub fn admin(
+    ctx: Context,
+    msg: Message,
+    args: ParsedCommand,
+) -> Pin<Box<dyn Future<Output = ()> + std::marker::Send>> {
+    Box::pin(admin_async(ctx, msg, args))
+}
+
+async fn admin_async(ctx: Context, msg: Message, _args: ParsedCommand) {
+    if author_has_role(msg.clone(), "Admin".into(), &ctx.clone().cache, ctx.clone()).await {
+    if let Err(why) = msg
+        .channel_id
+        .say(
+            &ctx.http,
+            "Yes, you are the admin, my Lord",
+        )
+        .await
+    {
+        println!("Error sending message: {:?}", why);
+    }}
+    else {
+        if let Err(why) = msg
+        .channel_id
+        .say(
+            &ctx.http,
+            "No, you do not possess the power of god",
+        )
+        .await
+    {
+        println!("Error sending message: {:?}", why);
+    }
     }
 }
 
