@@ -29,7 +29,9 @@ impl EventHandler for Handler {
             let functions = get_commands();
             match functions.get(&parsed_message.command.expect("Err parsing the command")) {
                 Some(function) => {function(ctx,msg, ParsedCommand{is_command: false, command: None, args: parsed_message.args}).await;},
-            _ => println!("No command found") // TODO: Add function for either help or just telling that there was no command found
+            _ => {if let Err(why) = msg.channel_id.say(&ctx.http, "Sorry, I do not know what to do now :(").await {
+                println!("Error sending message: {:?}", why);
+            }} 
             }
         }
         // TODO: handle message xp when message is no command
