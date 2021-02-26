@@ -11,7 +11,7 @@ Taurak is a Discord Bot with a lot of functionality. It has a music player, play
 
 - test -> Hello, im online
 
-- lyr x -> lyrics song x
+- lyr x -> lyrics song x | currently disabled due to exploitation risk
 
 - p/play x -> play song/playlist x
 
