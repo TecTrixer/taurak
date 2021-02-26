@@ -43,3 +43,9 @@ Taurak is a Discord Bot with a lot of functionality. It has a music player, play
 
 - when message is edited:
     - put original message into logs with user and tag edited
+
+## Random Stuff:
+
+- emoji color dark square: 007323 (HTML notation)
+
+- emoji color light square: f4e49c (HTML notation)
