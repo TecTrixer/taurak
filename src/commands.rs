@@ -28,8 +28,8 @@ pub fn get_commands() -> HashMap<
     functions.insert("dm_not_implemented".into(), dm_not_implemented);
     functions.insert("no command".into(), no_command);
     functions.insert("test".into(), test);
-    // functions.insert("lyr".into(), lyr);
-    // functions.insert("lyrics".into(), lyr);
+    functions.insert("lyr".into(), lyr);
+    functions.insert("lyrics".into(), lyr);
     functions.insert("lol".into(), lol);
     functions.insert("xD".into(), xd);
     functions.insert("xd".into(), xd);
@@ -119,15 +119,15 @@ async fn test_async(ctx: Context, msg: Message, _args: ParsedCommand) {
     }
 }
 
-pub fn _lyr(
+pub fn lyr(
     ctx: Context,
     msg: Message,
     args: ParsedCommand,
 ) -> Pin<Box<dyn Future<Output = ()> + std::marker::Send>> {
-    Box::pin(_lyr_async(ctx, msg, args))
+    Box::pin(lyr_async(ctx, msg, args))
 }
 
-async fn _lyr_async(ctx: Context, msg: Message, args: ParsedCommand) {
+async fn lyr_async(ctx: Context, msg: Message, args: ParsedCommand) {
     use std::process::Command;
 
     let song = match args.args {
