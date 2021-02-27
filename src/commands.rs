@@ -1,10 +1,10 @@
+use crate::checks::author_has_permission;
 use crate::checks::ParsedCommand;
+use crate::chess_game::render_board;
 use serenity::{model::channel::Message, prelude::*};
 use std::collections::HashMap;
 use std::future::Future;
 use std::pin::Pin;
-use crate::checks::author_has_permission;
-use crate::chess_game::render_board;
 
 pub fn get_commands() -> HashMap<
     String,
@@ -236,28 +236,29 @@ pub fn admin(
 }
 
 async fn admin_async(ctx: Context, msg: Message, _args: ParsedCommand) {
-    if author_has_permission(msg.clone(), serenity::model::permissions::Permissions::ADMINISTRATOR, &ctx.clone().cache, ctx.clone()).await {
-    if let Err(why) = msg
-        .channel_id
-        .say(
-            &ctx.http,
-            "Yes, you are the admin, my Lord",
-        )
-        .await
+    if author_has_permission(
+        msg.clone(),
+        serenity::model::permissions::Permissions::ADMINISTRATOR,
+        &ctx.clone().cache,
+        ctx.clone(),
+    )
+    .await
     {
-        println!("Error sending message: {:?}", why);
-    }}
-    else {
         if let Err(why) = msg
-        .channel_id
-        .say(
-            &ctx.http,
-            "No, you do not possess the power of god",
-        )
-        .await
-    {
-        println!("Error sending message: {:?}", why);
-    }
+            .channel_id
+            .say(&ctx.http, "Yes, you are the admin, my Lord")
+            .await
+        {
+            println!("Error sending message: {:?}", why);
+        }
+    } else {
+        if let Err(why) = msg
+            .channel_id
+            .say(&ctx.http, "No, you do not possess the power of god")
+            .await
+        {
+            println!("Error sending message: {:?}", why);
+        }
     }
 }
 pub fn offline(
@@ -269,30 +270,26 @@ pub fn offline(
 }
 
 async fn offline_async(ctx: Context, msg: Message, _args: ParsedCommand) {
-    if author_has_permission(msg.clone(), serenity::model::permissions::Permissions::ADMINISTRATOR, &ctx.clone().cache, ctx.clone()).await {
-    if let Err(why) = msg
-        .channel_id
-        .say(
-            &ctx.http,
-            "It's getting dark...",
-        )
-        .await
+    if author_has_permission(
+        msg.clone(),
+        serenity::model::permissions::Permissions::ADMINISTRATOR,
+        &ctx.clone().cache,
+        ctx.clone(),
+    )
+    .await
     {
-        println!("Error sending message: {:?}", why);
-    }
-    ctx.clone().invisible().await;
-}
-    else {
+        if let Err(why) = msg.channel_id.say(&ctx.http, "It's getting dark...").await {
+            println!("Error sending message: {:?}", why);
+        }
+        ctx.clone().invisible().await;
+    } else {
         if let Err(why) = msg
-        .channel_id
-        .say(
-            &ctx.http,
-            "Sorry, only for admins :(",
-        )
-        .await
-    {
-        println!("Error sending message: {:?}", why);
-    }
+            .channel_id
+            .say(&ctx.http, "Sorry, only for admins :(")
+            .await
+        {
+            println!("Error sending message: {:?}", why);
+        }
     }
 }
 
@@ -305,33 +302,32 @@ pub fn online(
 }
 
 async fn online_async(ctx: Context, msg: Message, _args: ParsedCommand) {
-    if author_has_permission(msg.clone(), serenity::model::permissions::Permissions::ADMINISTRATOR, &ctx.clone().cache, ctx.clone()).await {
-    if let Err(why) = msg
-        .channel_id
-        .say(
-            &ctx.http,
-            "Ahh, the sun is rising...",
-        )
-        .await
+    if author_has_permission(
+        msg.clone(),
+        serenity::model::permissions::Permissions::ADMINISTRATOR,
+        &ctx.clone().cache,
+        ctx.clone(),
+    )
+    .await
     {
-        println!("Error sending message: {:?}", why);
-    }
-    ctx.clone().online().await;
-}
-    else {
         if let Err(why) = msg
-        .channel_id
-        .say(
-            &ctx.http,
-            "Sorry, only for admins :(",
-        )
-        .await
-    {
-        println!("Error sending message: {:?}", why);
-    }
+            .channel_id
+            .say(&ctx.http, "Ahh, the sun is rising...")
+            .await
+        {
+            println!("Error sending message: {:?}", why);
+        }
+        ctx.clone().online().await;
+    } else {
+        if let Err(why) = msg
+            .channel_id
+            .say(&ctx.http, "Sorry, only for admins :(")
+            .await
+        {
+            println!("Error sending message: {:?}", why);
+        }
     }
 }
-
 
 // TODO: add chessrs and implement displaying a board with figures && later also adding possibility to move
 pub fn chess(
@@ -343,19 +339,35 @@ pub fn chess(
 }
 
 async fn chess_async(ctx: Context, msg: Message, args: ParsedCommand) {
-    if match &args.args {Some(v) => v.len() == 0, _ => true} {
-    if let Err(why) = msg.channel_id.say(&ctx.http, "Ahh, you want to play chess...\nI need some more information to start a match:\nIf you want to play against a bot enter ```t chess bot```").await {
+    if match &args.args {
+        Some(v) => v.len() == 0,
+        _ => true,
+    } {
+        if let Err(why) = msg.channel_id.say(&ctx.http, "Ahh, you want to play chess...\nI need some more information to start a match:\nIf you want to play against a bot enter ```t chess bot```").await {
         println!("Error sending message: {:?}", why);
     }
-}else if match &args.args {Some(v) => v.len() > 1 && v[0] == "fen", _ => false}{
-    render_board(ctx, msg, &args.args.expect("Somehow logic does not work anymore")[1]).await;
-}
-else{
-    if let Err(why) = msg.channel_id.say(&ctx.http, "Sorry, I can only display FEN positions yet:\n``` t chess fen <position>```").await {
-        println!("Error sending message: {:?}", why);
+    } else if match &args.args {
+        Some(v) => v.len() > 1 && v[0] == "fen",
+        _ => false,
+    } {
+        render_board(
+            ctx,
+            msg,
+            &args.args.expect("Somehow logic does not work anymore")[1],
+        )
+        .await;
+    } else {
+        if let Err(why) = msg
+            .channel_id
+            .say(
+                &ctx.http,
+                "Sorry, I can only display FEN positions yet:\n``` t chess fen <position>```",
+            )
+            .await
+        {
+            println!("Error sending message: {:?}", why);
+        }
     }
 }
-}
-
 
 // TODO: add help command (maybe automatic implementation)
