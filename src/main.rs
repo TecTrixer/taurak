@@ -14,6 +14,8 @@ use crate::commands::*;
 mod checks;
 use crate::checks::*;
 
+mod chess_game;
+
 #[async_trait]
 impl EventHandler for Handler {
     // For each received message do this:

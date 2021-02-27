@@ -4,6 +4,7 @@ use std::collections::HashMap;
 use std::future::Future;
 use std::pin::Pin;
 use crate::checks::author_has_permission;
+use crate::chess_game::render_board;
 
 pub fn get_commands() -> HashMap<
     String,
@@ -342,34 +343,12 @@ pub fn chess(
 }
 
 async fn chess_async(ctx: Context, msg: Message, args: ParsedCommand) {
-    if match args.args {Some(v) => v.len() == 0, _ => true} {
+    if match &args.args {Some(v) => v.len() == 0, _ => true} {
     if let Err(why) = msg.channel_id.say(&ctx.http, "Ahh, you want to play chess...\nI need some more information to start a match:\nIf you want to play against a bot enter ```t chess bot```").await {
         println!("Error sending message: {:?}", why);
     }
 }else{
-    let mut board = "".to_owned();
-    for x in 0..8 {
-        for i in 0..8{
-            if ((i & 1) != 0 && (x & 1) != 0) || ((i & 1) == 0 && (x & 1) == 0){
-                board.push_str("<:de:814922667081596980>");
-            }
-            else {
-                board.push_str("<:le:814922666967826474>");
-            }
-        }
-        board.push_str("\n");
-    }
-    if let Err(why) = msg.channel_id.send_message(&ctx.http, |m | {
-        m.embed(|e | {
-          e.title("Basic chess board:");
-          e.description(format!("{}", board));
-          
-          return e;
-        });
-        
-        return m;
-      }
-    ).await{println!("Error sending message: {:?}", why);}
+    render_board(ctx, msg, args).await;
 }
 }
 
