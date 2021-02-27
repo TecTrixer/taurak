@@ -347,8 +347,13 @@ async fn chess_async(ctx: Context, msg: Message, args: ParsedCommand) {
     if let Err(why) = msg.channel_id.say(&ctx.http, "Ahh, you want to play chess...\nI need some more information to start a match:\nIf you want to play against a bot enter ```t chess bot```").await {
         println!("Error sending message: {:?}", why);
     }
-}else{
-    render_board(ctx, msg, args).await;
+}else if match &args.args {Some(v) => v.len() > 1 && v[0] == "fen", _ => false}{
+    render_board(ctx, msg, &args.args.expect("Somehow logic does not work anymore")[1]).await;
+}
+else{
+    if let Err(why) = msg.channel_id.say(&ctx.http, "Sorry, I can only display FEN positions yet:\n``` t chess fen <position>```").await {
+        println!("Error sending message: {:?}", why);
+    }
 }
 }
 
