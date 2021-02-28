@@ -143,7 +143,7 @@ pub async fn render_board(ctx: Context, msg: Message, position: &String, turn: &
             m.embed(|e| {
                 e.title(format!("{}", title));
                 e.description(format!("{}", board));
-
+                e.color(0xf4e49c);
                 return e;
             });
 

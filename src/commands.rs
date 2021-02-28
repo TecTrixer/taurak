@@ -452,6 +452,7 @@ async fn define_async(ctx: Context, msg: Message, args: ParsedCommand) {
                 e.field("Description:".to_string(), response.description, false);
                 e.field("Example:".to_string(), response.example, false);
                 e.field("Author:".to_string(), response.author, false);
+                e.color(0xf7c010);
 
                 return e;
             });
