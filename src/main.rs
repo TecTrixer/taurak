@@ -1,10 +1,10 @@
 use dotenv;
-use std::env;
 use serenity::{
     async_trait,
     model::{channel::Message, gateway::Ready},
     prelude::*,
 };
+use std::env;
 
 struct Handler;
 
@@ -54,15 +54,16 @@ impl EventHandler for Handler {
                         }
                     }
                 }
-            // TODO: handle message xp when message is no command
-            if has_profanity_content(&msg2) {
-                if let Err(why) = msg2.channel_id
-                                .say(ctx2.http, "Hey, please watch your language!")
-                                .await
-                            {
-                                println!("Error sending message: {:?}", why);
-                            }
-            }
+                // TODO: handle message xp when message is no command
+                if has_profanity_content(&msg2) {
+                    if let Err(why) = msg2
+                        .channel_id
+                        .say(ctx2.http, "Hey, please watch your language!")
+                        .await
+                    {
+                        println!("Error sending message: {:?}", why);
+                    }
+                }
             }
             // Sent via direct message
             else {
