@@ -46,6 +46,8 @@ pub fn get_commands() -> HashMap<
     functions.insert("offline".into(), offline);
     functions.insert("online".into(), online);
     functions.insert("chess".into(), chess);
+    functions.insert("def".into(), define);
+    functions.insert("define".into(), define);
     // TODO: Maybe handle aliases in a better more efficient way
 
     return functions;
@@ -353,8 +355,11 @@ async fn chess_async(ctx: Context, msg: Message, args: ParsedCommand) {
         render_board(
             ctx,
             msg,
-            &args.clone().args.expect("Somehow logic does not work anymore")[1],
-            &args.args.expect("There should be a third argument")[2]
+            &args
+                .clone()
+                .args
+                .expect("Somehow logic does not work anymore")[1],
+            &args.args.expect("There should be a third argument")[2],
         )
         .await;
     } else if match &args.args {
@@ -364,11 +369,14 @@ async fn chess_async(ctx: Context, msg: Message, args: ParsedCommand) {
         render_board(
             ctx,
             msg,
-            &args.clone().args.expect("Somehow logic does not work anymore")[1],
+            &args
+                .clone()
+                .args
+                .expect("Somehow logic does not work anymore")[1],
             "",
         )
         .await;
-    }else {
+    } else {
         if let Err(why) = msg
             .channel_id
             .say(
@@ -382,4 +390,148 @@ async fn chess_async(ctx: Context, msg: Message, args: ParsedCommand) {
     }
 }
 
+pub fn define(
+    ctx: Context,
+    msg: Message,
+    args: ParsedCommand,
+) -> Pin<Box<dyn Future<Output = ()> + std::marker::Send>> {
+    Box::pin(define_async(ctx, msg, args))
+}
+
+async fn define_async(ctx: Context, msg: Message, args: ParsedCommand) {
+    let search_word = match args.args {
+        Some(x) => {
+            if x.len() > 0 {
+                x.join(" ")
+            } else {
+                if let Err(why) = msg
+                    .channel_id
+                    .say(
+                        &ctx.http,
+                        "I need a definition to search for:\n``` t define <word>```",
+                    )
+                    .await
+                {
+                    println!("Error sending message: {:?}", why);
+                }
+                return;
+            }
+        }
+        _ => {
+            if let Err(why) = msg
+                .channel_id
+                .say(
+                    &ctx.http,
+                    "I need a definition to search for:\n``` t define <word>```",
+                )
+                .await
+            {
+                println!("Error sending message: {:?}", why);
+            }
+            return;
+        }
+    };
+    let response = match get_definition(&search_word).await {
+        Ok(definition) => definition,
+        Err(why) => {
+            if let Err(why) = msg
+                .channel_id
+                .say(&ctx.http, format!("There has been an error:\n```{}```", why))
+                .await
+            {
+                println!("Error sending message: {:?}", why);
+            }
+            return;
+        }
+    };
+    if let Err(_) = msg
+        .channel_id
+        .send_message(&ctx.http, |m| {
+            m.embed(|e| {
+                e.title(format!("{}", response.word));
+                e.field("Description:".to_string(), response.description, false);
+                e.field("Example:".to_string(), response.example, false);
+                e.field("Author:".to_string(), response.author, false);
+
+                return e;
+            });
+
+            return m;
+        })
+        .await
+    {
+        if let Err(why) = msg
+            .channel_id
+            .say(
+                &ctx.http,
+                "Sorry, there was an error printing the definition, it might have been to long :(",
+            )
+            .await
+        {
+            println!("Error sending message: {:?}", why);
+        }
+    }
+}
+
 // TODO: add help command (maybe automatic implementation)
+use std::fmt;
+
+#[derive(Debug, Clone)]
+struct UrbanError;
+impl fmt::Display for UrbanError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(
+            f,
+            "Error when getting definition, probably it does not exist yet :("
+        )
+    }
+}
+async fn get_definition(search_word: &str) -> Result<Definition, UrbanError> {
+    use serde_json::Value;
+    let res = reqwest::get(&format!(
+        "https://api.urbandictionary.com/v0/define?term={}",
+        search_word
+    ))
+    .await
+    .expect("Error connecting");
+    let body = res.text().await.expect("error getting body");
+    let value: Value = serde_json::from_str(&body).expect("");
+    Ok(Definition {
+        word: match value["list"][0]["word"].as_str() {
+            Some(x) => x,
+            _ => return Err(UrbanError),
+        }
+        .to_string()
+        .replace("[", "")
+        .replace("]", ""),
+        description: match value["list"][0]["definition"].as_str() {
+            Some(x) => x,
+            _ => return Err(UrbanError),
+        }
+        .to_string()
+        .replace("[", "")
+        .replace("]", ""),
+        example: match value["list"][0]["example"].as_str() {
+            Some(x) => x,
+            _ => return Err(UrbanError),
+        }
+        .to_string()
+        .replace("[", "")
+        .replace("]", ""),
+        author: match value["list"][0]["author"].as_str() {
+            Some(x) => x,
+            _ => return Err(UrbanError),
+        }
+        .to_string()
+        .replace("[", "")
+        .replace("]", ""),
+    })
+}
+
+#[derive(Debug)]
+struct Definition {
+    word: String,
+    description: String,
+    example: String,
+    author: String,
+}
