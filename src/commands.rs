@@ -347,16 +347,28 @@ async fn chess_async(ctx: Context, msg: Message, args: ParsedCommand) {
         println!("Error sending message: {:?}", why);
     }
     } else if match &args.args {
-        Some(v) => v.len() > 1 && v[0] == "fen",
+        Some(v) => v.len() > 2 && v[0] == "fen",
         _ => false,
     } {
         render_board(
             ctx,
             msg,
-            &args.args.expect("Somehow logic does not work anymore")[1],
+            &args.clone().args.expect("Somehow logic does not work anymore")[1],
+            &args.args.expect("There should be a third argument")[2]
         )
         .await;
-    } else {
+    } else if match &args.args {
+        Some(v) => v.len() == 2 && v[0] == "fen",
+        _ => false,
+    } {
+        render_board(
+            ctx,
+            msg,
+            &args.clone().args.expect("Somehow logic does not work anymore")[1],
+            "",
+        )
+        .await;
+    }else {
         if let Err(why) = msg
             .channel_id
             .say(

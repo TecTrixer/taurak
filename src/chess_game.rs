@@ -2,7 +2,7 @@ use serenity::{model::channel::Message, prelude::*};
 
 
 // TODO: add display for who's turn it is (white || black)
-pub async fn render_board(ctx: Context, msg: Message, position: &String) -> () {
+pub async fn render_board(ctx: Context, msg: Message, position: &String, turn: &str) -> () {
     let mut board = "".to_owned();
     let fen_command = position.chars();
     let mut column: i8 = 0;
@@ -131,11 +131,17 @@ pub async fn render_board(ctx: Context, msg: Message, position: &String) -> () {
         }
         column += 1;
     }
+
+    let title = match turn {
+        "w" => "White's turn:",
+        "b" => "Black's turn",
+        _ => "Chess Board:"
+    };
     if let Err(why_not) = msg
         .channel_id
         .send_message(&ctx.http, |m| {
             m.embed(|e| {
-                e.title("Basic chess board:");
+                e.title(format!("{}", title));
                 e.description(format!("{}", board));
 
                 return e;
