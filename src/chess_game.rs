@@ -1,5 +1,7 @@
 use serenity::{model::channel::Message, prelude::*};
 
+
+// TODO: add display for who's turn it is (white || black)
 pub async fn render_board(ctx: Context, msg: Message, position: &String) -> () {
     let mut board = "".to_owned();
     let fen_command = position.chars();
