@@ -1,6 +1,6 @@
 [package]
 name = "taurak"
-version = "1.0.0"
+version = "1.1.0"
 authors = ["TecTrixer <tonihoevedes@gmail.com>"]
 edition = "2018"
 
@@ -11,3 +11,5 @@ serenity = { version = "0.10", default-features = false, features = ["client", "
 tokio = { version = "1.0", features = ["macros", "rt-multi-thread"] }
 dotenv = "0.15"
 censor = "0.2"
+reqwest = "0.11"
+serde_json = "1.0"
